@@ -273,15 +273,16 @@ export default function SessionPage() {
             <div className={`relative w-20 h-20 rounded-full overflow-hidden border-2
                              ${hasPermission ? 'border-green-400' : 'border-gray-600'}`}
                  style={{ boxShadow: hasPermission ? '0 0 0 3px rgba(74,222,128,0.25)' : 'none' }}>
-              {hasPermission
-                ? <video
-                    ref={(el) => { videoRef.current = el; if (el && stream) el.srcObject = stream }}
-                    autoPlay muted playsInline
-                    className="w-full h-full object-cover scale-x-[-1]"
-                  />
-                : <div className="w-full h-full flex items-center justify-center text-2xl"
-                       style={{ background: '#1A1A1A' }}>🔒</div>
-              }
+              {/* Always mounted so videoRef is set before requestPermission runs */}
+              <video
+                ref={videoRef}
+                autoPlay muted playsInline
+                className="w-full h-full object-cover scale-x-[-1]"
+              />
+              {!hasPermission && (
+                <div className="absolute inset-0 flex items-center justify-center text-2xl"
+                     style={{ background: '#1A1A1A' }}>🔒</div>
+              )}
             </div>
             <canvas ref={canvasRef} className="hidden" />
           </div>
