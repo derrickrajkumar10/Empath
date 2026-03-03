@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install -D tailwindcss postcss autoprefixer)",
+      "Bash(npx tailwindcss init -p)"
+    ]
+  }
+}

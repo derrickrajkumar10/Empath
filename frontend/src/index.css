@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background-color: #FFFFFF;
+    color: #191919;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* Light inputs (used in QuickStart) */
+  input, textarea {
+    background-color: #FFFFFF;
+    color: #191919;
+    border: 1px solid #E8E8E8;
+    border-radius: 8px;
+    padding: 12px 16px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input:focus, textarea:focus {
+    border-color: #191919;
+    box-shadow: 0 0 0 2px rgba(25,25,25,0.08);
+  }
+  input::placeholder { color: #9CA3AF; }
+}
+
+@layer utilities {
+  /* Light mode card */
+  .card-light {
+    @apply bg-white border border-border-light rounded-2xl p-6;
+  }
+  /* Dark card (session page) */
+  .card-dark {
+    @apply bg-surface-dark border border-border rounded-2xl p-6;
+  }
+  /* Black CTA button (light pages) */
+  .btn-black {
+    @apply px-6 py-3 rounded-lg bg-primary text-white text-sm font-semibold
+           transition-all duration-200 hover:bg-gray-800 cursor-pointer;
+  }
+  /* Ghost button (light pages) */
+  .btn-ghost {
+    @apply px-6 py-3 rounded-lg border border-border-light text-primary text-sm font-semibold
+           transition-all duration-200 hover:bg-surface cursor-pointer;
+  }
+  /* Dark pill button (session page) */
+  .pill-btn-dark {
+    @apply px-6 py-3 rounded-full border border-white/20 text-white text-sm font-medium
+           transition-all duration-200 hover:bg-white hover:text-black cursor-pointer;
+  }
+  /* Keep old aliases for session/report pages */
+  .pill-btn { @apply pill-btn-dark; }
+  .pill-btn-solid {
+    @apply px-6 py-3 rounded-full bg-white text-black text-sm font-medium
+           transition-all duration-200 hover:bg-white/90 cursor-pointer;
+  }
+  .card { @apply card-dark; }
+}
