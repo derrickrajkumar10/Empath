@@ -26,19 +26,24 @@ def analyze_frame(image_bytes: bytes) -> dict:
     top = results[0]
 
     # Map dima806 output labels → our 5 engagement states
+    # "confused" is reached via frustration (angry) — studying-specific interpretation
     label_map = {
-        "happy": "focused",
-        "surprise": "focused",
-        "neutral": "neutral",
-        "fear": "distressed",
-        "sad": "distressed",
-        "disgust": "bored",
-        "angry": "distressed",
-        "contempt": "bored"
+        "happy":    "focused",    # engaged, enjoying content
+        "surprise": "neutral",    # momentary surprise ≠ focused
+        "neutral":  "neutral",    # calm, attentive
+        "fear":     "distressed", # genuinely overwhelmed
+        "sad":      "neutral",    # serious/concentrated face, not distressed
+        "disgust":  "bored",      # disengaged
+        "angry":    "confused",   # frustration when learning = confused
+        "contempt": "neutral",    # skeptical but still watching
     }
 
     raw_label = top["label"].lower()
     emotion = label_map.get(raw_label, "neutral")
+
+    # Low-confidence predictions are unreliable — fall back to neutral
+    if top["score"] < 0.40:
+        emotion = "neutral"
 
     return {
         "emotion": emotion,

@@ -56,7 +56,7 @@ function FocusChartSection({ chartData, emotion }) {
 export default function SessionPage() {
   const navigate = useNavigate()
   const { sessionId, topic, videoUrl, clearSession } = useSession()
-  const { videoRef, canvasRef, hasPermission, requestPermission, captureFrame, stopStream } = useWebcam()
+  const { videoRef, canvasRef, hasPermission, stream, requestPermission, captureFrame, stopStream } = useWebcam()
 
   const [emotion, setEmotion] = useState('neutral')
   const [focusScore, setFocusScore] = useState(70)
@@ -69,6 +69,7 @@ export default function SessionPage() {
 
   const recentEventsRef = useRef([])
   const lastSuggestionStateRef = useRef(null)
+  const lastSuggestionTimeRef = useRef(0)
   const analyzeIntervalRef = useRef(null)
   const timerRef = useRef(null)
   const elapsedRef = useRef(0)
@@ -141,9 +142,11 @@ export default function SessionPage() {
       setFocusScore(score)
       setChartData(prev => [...prev.slice(-60), { time: ts, score, emotion: detectedEmotion }])
 
-      // Suggest if score < 50 and state changed
-      if (score < 50 && state !== lastSuggestionStateRef.current) {
+      // Suggest if score < 45, state changed, and at least 60s since last suggestion
+      const timeSinceLast = ts - lastSuggestionTimeRef.current
+      if (score < 45 && state !== lastSuggestionStateRef.current && timeSinceLast >= 60) {
         lastSuggestionStateRef.current = state
+        lastSuggestionTimeRef.current = ts
         const sugResult = await getSuggestion(sessionId, state, topic, ts)
         const newSuggestion = { ...sugResult, timestamp: ts, id: Date.now() }
         setSuggestion(newSuggestion)
@@ -271,7 +274,11 @@ export default function SessionPage() {
                              ${hasPermission ? 'border-green-400' : 'border-gray-600'}`}
                  style={{ boxShadow: hasPermission ? '0 0 0 3px rgba(74,222,128,0.25)' : 'none' }}>
               {hasPermission
-                ? <video ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover scale-x-[-1]" />
+                ? <video
+                    ref={(el) => { videoRef.current = el; if (el && stream) el.srcObject = stream }}
+                    autoPlay muted playsInline
+                    className="w-full h-full object-cover scale-x-[-1]"
+                  />
                 : <div className="w-full h-full flex items-center justify-center text-2xl"
                        style={{ background: '#1A1A1A' }}>🔒</div>
               }

@@ -42,6 +42,14 @@ export function useWebcam() {
     })
   }, [stream])
 
+  // Attach stream to video element whenever stream becomes available
+  // (videoRef may not exist yet when requestPermission() first runs)
+  useEffect(() => {
+    if (videoRef.current && stream) {
+      videoRef.current.srcObject = stream
+    }
+  }, [stream])
+
   // Cleanup on unmount
   useEffect(() => {
     return () => stopStream()
